@@ -1,5 +1,7 @@
 # NLP Todo
 
+## Note: This is an app made entirely by Claude Code, as I was curious what it does/how it works and I needed a replacement for Todoist (lol). This is not human written code and I advise against any serious usage, as I cannot ensure backend stability since....I didn't write it. All credits go to Claude.
+
 A full-stack to-do list app with natural language scheduling. Type tasks the way you think in terms of dates, times, recurrence, tags, and priorities. which are extracted automatically.
 
 ## Features
