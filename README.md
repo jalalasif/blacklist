@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NLP Todo
 
-## Getting Started
+A full-stack to-do list app with natural language scheduling. Type tasks the way you think — dates, times, recurrence, tags, and priorities are extracted automatically.
 
-First, run the development server:
+## Features
+
+- **NLP scheduling** — chrono-node parses phrases like "next Friday at 3pm", "in two weeks", "tomorrow morning"
+- **Recurring tasks** — "every Monday at 9am", "daily", "every weekday", "every 2 weeks"
+- **Priority levels** — `priority:high` / `!high` inline, or via the selector
+- **Tags** — `#tagname` inline, or via the tag picker
+- **Due date reminders** — browser push notifications via Web Push API
+- **Filters** — filter by tag, priority, due date, completion status, and search
+
+## Setup
+
+### 1. Start the database
+
+```bash
+npm run db:up
+```
+
+### 2. Configure environment
+
+Copy `.env.local` and update values (VAPID keys are already generated):
+
+```bash
+# The DATABASE_URL is pre-configured for the Docker Compose setup
+# CRON_SECRET should be changed to a secure random string
+```
+
+### 3. Run migrations
+
+```bash
+npm run db:migrate
+```
+
+### 4. Start the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 5. (Optional) Start the reminder cron job
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+In a separate terminal:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run cron
+```
 
-## Learn More
+## NLP Input Examples
 
-To learn more about Next.js, take a look at the following resources:
+| Input | Parsed |
+|-------|--------|
+| `Submit report by next Friday at 3pm #work priority:high` | Due Fri 3pm, HIGH, tag: work |
+| `Team standup every weekday at 9am #meetings` | Recurring M-F 9am, tag: meetings |
+| `Call dentist tomorrow morning priority:low` | Due tomorrow ~9am, LOW |
+| `Review PRs every Monday #dev` | Recurring every Monday |
+| `Pay rent in 3 days` | Due in 3 days |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/
+  api/tasks/          → GET (list+filter), POST (create with NLP)
+  api/tasks/[id]/     → GET, PATCH, DELETE
+  api/tags/           → Tag CRUD
+  api/push/           → Web Push subscription management
+  api/cron/reminders/ → Cron endpoint (fires push notifications)
+lib/
+  nlp/parseTask.ts    → chrono-node + recurrence regex + inline tags/priority
+  push/webpush.ts     → web-push helper
+  prisma.ts           → Prisma client singleton
+scripts/
+  cron.mjs            → node-cron runner (call /api/cron/reminders every minute)
+```
 
-## Deploy on Vercel
+## Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js 16** (App Router, TypeScript)
+- **PostgreSQL** via Prisma 7 + `@prisma/adapter-pg`
+- **chrono-node** for NLP date/time parsing
+- **rrule** for RRULE generation and iteration
+- **web-push** for browser push notifications
+- **shadcn/ui** + Tailwind CSS
+- **SWR** for client-side data fetching
