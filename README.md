@@ -1,15 +1,15 @@
 # NLP Todo
 
-A full-stack to-do list app with natural language scheduling. Type tasks the way you think — dates, times, recurrence, tags, and priorities are extracted automatically.
+A full-stack to-do list app with natural language scheduling. Type tasks the way you think in terms of dates, times, recurrence, tags, and priorities. which are extracted automatically.
 
 ## Features
 
-- **NLP scheduling** — chrono-node parses phrases like "next Friday at 3pm", "in two weeks", "tomorrow morning"
-- **Recurring tasks** — "every Monday at 9am", "daily", "every weekday", "every 2 weeks"
-- **Priority levels** — `priority:high` / `!high` inline, or via the selector
-- **Tags** — `#tagname` inline, or via the tag picker
-- **Due date reminders** — browser push notifications via Web Push API
-- **Filters** — filter by tag, priority, due date, completion status, and search
+- **NLP scheduling** : chrono-node parses phrases like "next Friday at 3pm", "in two weeks", "tomorrow morning"
+- **Recurring tasks** : "every Monday at 9am", "daily", "every weekday", "every 2 weeks"
+- **Priority levels** : `priority:high` / `!high` inline, or via the selector
+- **Tags** : `#tagname` inline, or via the tag picker
+- **Due date reminders** : browser push notifications via Web Push API
+- **Filters** : filter by tag, priority, due date, completion status, and search
 
 ## Setup
 
